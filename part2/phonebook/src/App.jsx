@@ -1,8 +1,8 @@
 import PersonForm from './components/PersonForm'
 import Filter from './components/Filter'
 import DisplayPeople from './components/DisplayPeople'
+import phonebookServices from './services/phonebook'
 import { useState, useEffect } from 'react'
-import axios from 'axios'
 
 const App = () => {
   const [persons, setPersons] = useState([]) 
@@ -10,8 +10,11 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [phone, setPhone] = useState('')
   useEffect(() => {
-    axios.get('http://localhost:3001/persons')
-         .then(response => setPersons(response.data))
+    phonebookServices.getAll()
+                     .then(people => setPersons(people))
+                     .catch(error => {
+                      console.log(error)
+                    })
   }, [])
 
   return (
@@ -22,13 +25,13 @@ const App = () => {
         <PersonForm 
           newName={newName} 
           setNewName={setNewName} 
-          phone={phone} 
+          phone={phone}
           setPhone={setPhone} 
           persons={persons}
           setPersons={setPersons}
         />
       <h2>Numbers</h2>
-        <DisplayPeople persons={persons} searchName={searchName}/>
+        <DisplayPeople persons={persons} searchName={searchName} setPersons={setPersons}/>
     </div>
   )
 }
